@@ -1,14 +1,19 @@
 {
+    "name": "ckanext-files",
+    "version": "1.0.0",
+    "description": "CKAN: The Open Source Data Portal Software ==========================================",
     "dependencies": {
-        "cypress": "^13.12.0",
-        "cypress-intercept-formdata": "^0.6.0",
-        "pyright": "^1.1.367",
         "typescript": "^5.4.2"
     },
     "devDependencies": {
-        "@types/jquery": "^3.5.29"
+        "@types/jquery": "^3.5.29",
+        "cypress": "^13.12.0",
+        "cypress-intercept-formdata": "^0.6.0",
+        "pyright": "^1.1.392"
     },
     "scripts": {
+        "lint": "pyright",
+        "e2e:chrome": "cypress run --browser chrome",
         "build": "tsc",
         "watch": "tsc -w"
     }
