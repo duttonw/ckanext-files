@@ -13,28 +13,38 @@ permissions:
 
 jobs:
   frontend-test:
+    strategy:
+       matrix:
+          include: #ckan-image see https://github.com/ckan/ckan-docker-base, ckan-version controls other image tags
+#          -   ckan-version: "2.11"
+#              ckan-image: "2.11-py3.10"
+#              experimental: false
+          -   ckan-version: "2.10"
+              ckan-image: "2.10-py3.10"
+              experimental: false
+#          -   ckan-version: "master"
+#              ckan-image: "master"
+#              experimental: true  # master is unstable, good to know if we are compatible or not
     runs-on: ubuntu-latest
+    container:
+        image: ckan/ckan-dev:${{ matrix.ckan-image }}
+        options: --user root
     services:
       ckan-postgres:
-        image: postgres:10
+        image: ckan/ckan-postgres-dev:${{ matrix.ckan-version }}
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
         env:
           POSTGRES_USER: ckan_default
           POSTGRES_PASSWORD: pass
           POSTGRES_DB: ckan_test
 
       ckan-redis:
-        image: redis
+        image: redis:7
         ports:
           - 6379:6379
       ckan-solr:
-        image: ckan/ckan-solr:master
+        image: ckan/ckan-solr:${{ matrix.ckan-version }}-solr9
         ports:
           - 8983:8983
 
@@ -47,23 +57,29 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install Cypress deps
         run: |
-            apt update
-            apt install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-
-      - uses: actions/setup-python@v4
+            sudo apt-get update
+            #Ubuntu 24.04+
+            sudo apt-get install -y \
+              libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev \
+              libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install python deps
         run: |
-            git clone --depth 1 --branch ckan-2.10.4 https://github.com/ckan/ckan ../ckan
-            pip install '../ckan[requirements,dev]' -e.
+            # Note: locked to 2.10.4
+            # git clone --depth 1 --branch ckan-2.10.4 https://github.com/ckan/ckan ../ckan
+            # pip install '../ckan[requirements,dev]' -e.
 
       - name: Init environment
         run: |
+          # Replace default path to CKAN core config file with the one on the container
+          sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
+
           ckan -c test.ini db upgrade
 
       - name: Run Cypress
@@ -71,13 +87,13 @@ jobs:
         with:
           start: ckan -c test.ini run
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: cypress-videos

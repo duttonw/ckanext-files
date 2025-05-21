@@ -50,7 +50,6 @@ jobs:
     - name: Install requirements
       # Install any extra requirements your extension has here (dev requirements, other extensions etc)
       run: |
-        apt install git
         pip install -e ".[dev,gcs,test]"
       # .[test] will install base dependencies as well as the test optional group
 
