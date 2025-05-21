@@ -111,11 +111,11 @@ def temporal_download(token: str) -> Response:
         data = utils.decode_token(token)
 
     except jwt.ExpiredSignatureError as err:
-        log.debug("Expired file-download token: %s", err)
+        log.debug("Expired file-download token", exc_info=True)
         raise tk.ObjectNotFound("file") from err
 
     except jwt.InvalidTokenError as err:
-        log.debug("Cannot decode file-download token: %s", err)
+        log.debug("Cannot decode file-download token", exc_info=True)
         raise tk.ObjectNotFound("file") from err
 
     if data.get("topic") != "download_file":

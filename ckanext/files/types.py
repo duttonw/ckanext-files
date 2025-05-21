@@ -23,13 +23,16 @@ OwnerOperation = Literal["show", "update", "delete", "file_transfer", "file_scan
 
 
 class PUploadStream(Protocol):
-    def read(self, size: Any = ..., /) -> bytes: ...
+    def read(self, size: Any = ..., /) -> bytes:
+        ...
 
-    def __iter__(self) -> Iterator[bytes]: ...
+    def __iter__(self) -> Iterator[bytes]:
+        ...
 
 
 class PTask(Protocol):
-    def __call__(self, result: Any, idx: int, prev: Any) -> Any: ...
+    def __call__(self, result: Any, idx: int, prev: Any) -> Any:
+        ...
 
 
 __all__ = [
