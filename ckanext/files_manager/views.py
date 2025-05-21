@@ -91,7 +91,7 @@ class FilesManagerUploadView(MethodView):
 
 
 class FilesManagerDeleteView(MethodView):
-    def post(self, file_id: str):
+    def post(self, file_id: str) -> Response:
         try:
             tk.get_action("files_file_delete")({"ignore_auth": True}, {"id": file_id})
         except tk.ValidationError as e:

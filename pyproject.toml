@@ -13,6 +13,8 @@ dependencies = [
              "file-keeper>=0.0.7",
              "typing_extensions",
              "pyyaml",
+             "ckantoolkit",
+             "ckan"
 ]
 authors = [
     {name = "DataShades", email = "datashades@linkdigital.com.au"},

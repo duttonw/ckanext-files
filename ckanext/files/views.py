@@ -219,7 +219,7 @@ def delete_file(
         except tk.NotAuthorized as err:
             tk.h.flash_error(err)
         else:
-            came_from = tk.h.get_request_param("came_from")
+            came_from: str = tk.h.get_request_param("came_from")
             if came_from:
                 return tk.redirect_to(came_from)
 
@@ -280,7 +280,7 @@ def autocomplete_own_files() -> Any:
 @bp.route("/api/util/files_autocomplete_available_resource_files")
 def autocomplete_available_resource_files() -> Any:
     tk.check_access("files_autocomplete_available_resource_files", {}, {})
-    q = tk.request.args.get("incomplete")
+    q: str = tk.request.args.get("incomplete")
 
     result = tk.get_action("files_file_search")(
         {"ignore_auth": True},
