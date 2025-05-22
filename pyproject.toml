@@ -11,6 +11,8 @@ keywords = [ "CKAN", "file-management", "cloud", "filesystem"]
 requires-python = ">= 3.8"
 dependencies = [
              "file-keeper>=0.0.7",
+             "ckanext-admin-panel>=1.1.19",
+             "ckanext-collection>=0.3.0",
              "typing_extensions",
              "pyyaml",
              "ckantoolkit",
